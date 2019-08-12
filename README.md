@@ -1,8 +1,8 @@
-##IMDb Dataset Details 
+## IMDb Dataset Details 
 
 Each dataset is contained in a gzipped, tab-separated-values (TSV) formatted file in the UTF-8 character set. The first line in each file contains headers that describe what is in each column. A ‘\N’ is used to denote that a particular field is missing or null for that title/name. The available datasets are as follows: 
 
-##title.akas.tsv.gz - 
+## title.akas.tsv.gz - 
 Contains the following information for titles:
 
 <strong>titleId</strong> (string) - a tconst, an alphanumeric unique identifier of the title<br>
@@ -16,7 +16,7 @@ Contains the following information for titles:
 <strong>isOriginalTitle</strong> (boolean) – 0: not original title; 1: original title<br>
 
 
-##title.basics.tsv.gz -
+## title.basics.tsv.gz -
 Contains the following information for titles:
 
 <strong>tconst</strong> (string) - alphanumeric unique identifier of the title<br>
@@ -29,14 +29,14 @@ Contains the following information for titles:
 <strong>runtimeMinutes</strong> – primary runtime of the title, in minutes<br>
 <strong>genres</strong> (string array) – includes up to three genres associated with the title<br>
 
-##title.crew.tsv.gz –
+## title.crew.tsv.gz –
 Contains the director and writer information for all the titles in IMDb. Fields include:
 
 <strong>tconst</strong> (string) - alphanumeric unique identifier of the title<br>
 <strong>directors</strong> (array of nconsts) - director(s) of the given title<br>
 <strong>writers</strong> (array of nconsts) – writer(s) of the given title
 
-##title.episode.tsv.gz –
+## title.episode.tsv.gz –
 Contains the tv episode information. Fields include:
 
 <strong>tconst</strong> (string) - alphanumeric identifier of episode<br>
@@ -45,7 +45,7 @@ Contains the tv episode information. Fields include:
 <strong>episodeNumber</strong> (integer) – episode number of the tconst in the TV series<br>
 
 
-##title.principals.tsv.gz – 
+## title.principals.tsv.gz – 
 Contains the principal cast/crew for titles
 
 <strong>tconst</strong> (string) - alphanumeric unique identifier of the title<br>
@@ -55,14 +55,14 @@ Contains the principal cast/crew for titles
 <strong>job</strong> (string) - the specific job title if applicable, else '\N'<br>
 <strong>characters</strong> (string) - the name of the character played if applicable, else '\N'<br>
 
-##title.ratings.tsv.gz –
+## title.ratings.tsv.gz –
 Contains the IMDb rating and votes information for titles
 
 <strong>tconst</strong> (string) - alphanumeric unique identifier of the title<br>
 <strong>averageRating</strong> – weighted average of all the individual user ratings<br>
 <strong>numVotes</strong> - number of votes the title has received
 
-##name.basics.tsv.gz –
+## name.basics.tsv.gz –
 Contains the following information for names:
 
 <strong>nconst</strong> (string) - alphanumeric unique identifier of the name/person<br>
@@ -72,7 +72,7 @@ Contains the following information for names:
 <strong>primaryProfession</strong> (array of strings)– the top-3 professions of the person<br>
 <strong>knownForTitles</strong> (array of tconsts) – titles the person is known for
 
-###The case for Yang.db with imdb
+### The case for Yang.db with imdb
 
 This imdb repository will demonstrate the Knowledge (RDF) ontology, the imdb tables will be ingested into yang.db (E/S)
 and will be queries with different cypher patterns.
