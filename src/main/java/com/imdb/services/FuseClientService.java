@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class FuseClientService {
@@ -96,4 +97,15 @@ public class FuseClientService {
         return pageResourceInfo;
     }
 
+    public QueryResourceInfo upload(LogicalGraphModel graphModel)  {
+        try {
+            return fuseClient.loadData(KNOWLEDGE, graphModel);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public CompletableFuture<QueryResourceInfo> asyncUpload(LogicalGraphModel model) {
+        return CompletableFuture.supplyAsync(() -> upload(model));
+    }
 }

@@ -1,18 +1,21 @@
 package com.imdb.services;
 
-import com.yangdb.fuse.client.FuseClient;
+import com.yangdb.fuse.model.logical.LogicalGraphModel;
+import com.yangdb.fuse.model.resourceInfo.QueryResourceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 @Component
 @ComponentScan({"com.imdb.*"})
@@ -22,38 +25,76 @@ public class BaseImportService implements ImportService {
     @Inject
     private FuseClientService fuseClientService;
 
-    @Override
-    public Set<String> importEntities(String dir) throws IOException {
-        File folder = new File(dir);
-        if (!folder.exists() || !folder.isDirectory() || folder.listFiles() == null || folder.listFiles().length == 0) {
-            //logger.error("{} in not a valid directory", dir);
-            return Collections.emptySet();
-        }
+    @Value("${import.bulk.size}")
+    private int bulkSize;
 
-        Set<String> results = new HashSet<>();
-        for (File jsonFile : Objects.requireNonNull(folder.listFiles())) {
-            if (jsonFile.isFile() && jsonFile.getName().endsWith("json")) {
-                results.addAll(load(jsonFile));
-            }
-        }
+    @Value("${import.timeout}")
+    private int timeout;
 
-        return results;
+    private ConcurrentLinkedQueue<QueryResourceInfo> responses = new ConcurrentLinkedQueue<>();
+
+    /**
+     * load imdb titles nodes from zip file
+     * @param jsonFile
+     * @throws IOException
+     * @return
+     */
+    public ConcurrentLinkedQueue<QueryResourceInfo> loadTitleAKA(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadTitleAKA);
     }
 
-    private Set<String> load(File jsonFile) {
+    public ConcurrentLinkedQueue<QueryResourceInfo> loadTitle(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadTitle);
+    }
+
+    private <T> ConcurrentLinkedQueue<QueryResourceInfo> load(File jsonFile,LoadRow<T> loader) throws IOException {
+        responses.clear();
+
+        GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(jsonFile.getPath()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+        //go over all the lines and translate to graph elements
+        Stream<String> lines = br.lines();
+        Iterator<String> iterator = lines.iterator();
+
+        //print file
+        System.out.println(jsonFile.getName());
+        System.out.println(iterator.next());
+
+        //create initial graph model
+        LogicalGraphModel graphModel = new LogicalGraphModel();
+        int counter = 0;
+        //work with fuse uploader with predefined bulk size - graphModel is the bulk unit
+        while (iterator.hasNext()) {
+            if(counter>=bulkSize) {
 /*
-        try (Stream<String> stream = Files.lines(Paths.get(jsonFile.getPath()))) {
-            LogicalGraphModel graphModel = transformer.transform(stream.map(wrapIgnorErr(JSONObject::new))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-            return fuseClientService.upload(graphModel);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                //upload async
+                fuseClientService.asyncUpload(graphModel)
+                        .thenAccept(this::notify);
 */
+                fuseClientService.upload(graphModel);
+                //restart counter and create a new graphModel
+                counter=0;
+                graphModel = new LogicalGraphModel();
+            }
+            //populate title node in the graph graphModel
+            loader.loadRow(graphModel,iterator.next());
+            counter++;
 
-        return Collections.emptySet();
+        }
+        //wait for all threads to be idle
+        ForkJoinPool.commonPool().awaitQuiescence(timeout, TimeUnit.MINUTES);
+        return responses;
     }
 
+
+    private void notify(QueryResourceInfo queryResourceInfo) {
+//        responses.add(queryResourceInfo);
+        System.out.println("$");
+    }
+
+
+    interface LoadRow<T> {
+        T loadRow(LogicalGraphModel model,String line);
+    }
 
 }
