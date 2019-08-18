@@ -33,4 +33,37 @@ public class LoadTitlesTest {
 
     }
 
+    @Test
+    public void importCrew() throws  IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource("data/title.crew.tsv.gz");
+        importService.loadCrew(new File(resource.getFile()));
+
+    }
+
+    @Test
+    public void importPeople() throws  IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource("data/name.basics.tsv.gz");
+        importService.loadPeople(new File(resource.getFile()));
+
+    }
+
+    @Test
+    public void importRating() throws  IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource("data/title.ratings.tsv.gz");
+        importService.loadRating(new File(resource.getFile()));
+    }
+
+    @Test
+    public void importEpisods() throws  IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource("data/title.episode.tsv.gz");
+        importService.loadEpisode(new File(resource.getFile()));
+    }
+
+    @Test
+    public void importCast() throws  IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource("data/title.principals.tsv.gz");
+        importService.loadCast(new File(resource.getFile()));
+
+    }
+
 }

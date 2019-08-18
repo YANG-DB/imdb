@@ -3,6 +3,7 @@ package com.imdb.model;
 import javaslang.Tuple2;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.imdb.model.Model.$;
@@ -12,7 +13,7 @@ public interface IMDB {
 
 
     enum TitleAKA {
-        titleId($("titleId", "TitleAKA", FK)),
+        titleId($("titleId", TitleAKA.class.getSimpleName(), FK)),
         ordering($("ordering", "stringValue", FIELD)),
         title($("title", "stringValue", FIELD)),
         region($("region", "stringValue", FIELD)),
@@ -65,7 +66,7 @@ public interface IMDB {
     }
 
     enum Crew {
-        tconst($("tconst", "TitleAKA", FK)),
+        tconst($("tconst", Title.class.getSimpleName(), FK)),
         directors($("directors", "stringValue", FIELD)),
         writers($("writers", "stringValue", FIELD));
 
@@ -75,10 +76,18 @@ public interface IMDB {
 
         private Model model;
 
+        public static Row<Crew> of(List<String> fieldValues) {
+            return new Row<>(new Tuple2<>(Crew.tconst, fieldValues.get(0)),
+                    fieldValues.stream().skip(1)
+                            .filter(v->fieldValues.indexOf(v)<=(Crew.values().length-1))
+                            .map(v -> new Tuple2<Crew, Object>(Crew.values()[fieldValues.indexOf(v)], v)).
+                            collect(Collectors.toList()));
+        }
+
     }
 
     enum Episods {
-        tconst($("tconst", "TitleAKA", FK)),
+        tconst($("tconst", Title.class.getSimpleName(), FK)),
         parentTconst($("parentTconst", "TitleAKA", FK)),
         seasonNumber($("seasonNumber", "int", FIELD)),
         episodeNumber($("episodeNumber", "int", FIELD));
@@ -89,10 +98,18 @@ public interface IMDB {
 
         private Model model;
 
+        public static Row<Episods> of(List<String> fieldValues) {
+            return new Row<>(new Tuple2<>(Episods.tconst, fieldValues.get(0)),
+                    fieldValues.stream().skip(1)
+                            .filter(v->fieldValues.indexOf(v)<=(Episods.values().length-1))
+                            .map(v -> new Tuple2<Episods, Object>(Episods.values()[fieldValues.indexOf(v)], v)).
+                            collect(Collectors.toList()));
+        }
+
     }
 
     enum Cast {
-        tconst($("tconst", "TitleAKA", FK)),
+        tconst($("tconst", Title.class.getSimpleName(), FK)),
         nconst($("nconst", "Person", FK)),
         ordering($("ordering", "int", FIELD)),
         category($("category", "stringValue", FIELD)),
@@ -105,10 +122,18 @@ public interface IMDB {
 
         private Model model;
 
+        public static Row<Cast> of(List<String> fieldValues) {
+            return new Row<>(new Tuple2<>(Cast.tconst, fieldValues.get(0)),
+                    fieldValues.stream().skip(1)
+                            .filter(v->fieldValues.indexOf(v)<=(Cast.values().length-1))
+                            .map(v -> new Tuple2<Cast, Object>(Cast.values()[fieldValues.indexOf(v)], v)).
+                            collect(Collectors.toList()));
+        }
+
     }
 
     enum Rating {
-        tconst($("tconst", "TitleAKA", FK)),
+        tconst($("tconst", Title.class.getSimpleName(), FK)),
         averageRating($("averageRating", "int", FIELD)),
         numVotes($("numVotes", "long", FIELD));
 
@@ -118,21 +143,37 @@ public interface IMDB {
 
         private Model model;
 
+        public static Row<Rating> of(List<String> fieldValues) {
+            return new Row<>(new Tuple2<>(Rating.tconst, fieldValues.get(0)),
+                    fieldValues.stream().skip(1)
+                            .filter(v->fieldValues.indexOf(v)<=(Rating.values().length-1))
+                            .map(v -> new Tuple2<Rating, Object>(Rating.values()[fieldValues.indexOf(v)], v)).
+                            collect(Collectors.toList()));
+        }
+
     }
 
     enum Person {
-        tconst($("tconst", "Person", FK)),
+        tconst($("tconst", "techId", METADATA)),
         primaryName($("primaryName", "stringValue", FIELD)),
         birthYear($("birthYear", "date", FIELD)),
         deathYear($("deathYear", "date", FIELD)),
         primaryProfession($("primaryProfession", "stringValue", FIELD)),
-        knownForTitles($("knownForTitles", "stringValue", FIELD));
+        knownForTitles($("knownForTitles", Title[].class.getSimpleName(), FK));
 
         Person(Model model) {
             this.model = model;
         }
 
         private Model model;
+
+        public static Row<Person> of(List<String> fieldValues) {
+            return new Row<>(new Tuple2<>(Person.tconst, fieldValues.get(0)),
+                    fieldValues.stream().skip(1)
+                            .filter(v->fieldValues.indexOf(v)<=(Person.values().length-1))
+                            .map(v -> new Tuple2<Person, Object>(Person.values()[fieldValues.indexOf(v)], v)).
+                            collect(Collectors.toList()));
+        }
 
     }
 
@@ -154,5 +195,11 @@ public interface IMDB {
         public List<Tuple2<T, Object>> columns() {
             return columns;
         }
+
+        public List<Tuple2<T, Object>> columns(Predicate<Tuple2<T, Object>> filter) {
+            return columns.stream().filter(filter).collect(Collectors.toList());
+        }
+
+
     }
 }

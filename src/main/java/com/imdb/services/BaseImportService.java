@@ -47,6 +47,31 @@ public class BaseImportService implements ImportService {
         return load(jsonFile, ImdbImporter::loadTitle);
     }
 
+    @Override
+    public Collection<QueryResourceInfo> loadCrew(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadCrew);
+    }
+
+    @Override
+    public Collection<QueryResourceInfo> loadPeople(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadPeople);
+    }
+
+    @Override
+    public Collection<QueryResourceInfo> loadRating(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadCast);
+    }
+
+    @Override
+    public Collection<QueryResourceInfo> loadEpisode(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadEpisode);
+    }
+
+    @Override
+    public Collection<QueryResourceInfo> loadCast(File jsonFile) throws IOException {
+        return load(jsonFile, ImdbImporter::loadCast);
+    }
+
     private <T> ConcurrentLinkedQueue<QueryResourceInfo> load(File jsonFile,LoadRow<T> loader) throws IOException {
         responses.clear();
 
@@ -88,8 +113,7 @@ public class BaseImportService implements ImportService {
 
 
     private void notify(QueryResourceInfo queryResourceInfo) {
-//        responses.add(queryResourceInfo);
-        System.out.println("$");
+        responses.add(queryResourceInfo);
     }
 
 
