@@ -59,7 +59,7 @@ public class BaseImportService implements ImportService {
 
     @Override
     public Collection<QueryResourceInfo> loadRating(File jsonFile) throws IOException {
-        return load(jsonFile, ImdbImporter::loadCast);
+        return load(jsonFile, ImdbImporter::loadRating,true);
     }
 
     @Override
@@ -72,7 +72,28 @@ public class BaseImportService implements ImportService {
         return load(jsonFile, ImdbImporter::loadCast);
     }
 
+    /**
+     * upload without merge
+     * @param jsonFile
+     * @param loader
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
     private <T> ConcurrentLinkedQueue<QueryResourceInfo> load(File jsonFile,LoadRow<T> loader) throws IOException {
+        return load(jsonFile,loader,false);
+    }
+
+    /**
+     * upsert - merge entities
+     * @param jsonFile
+     * @param loader
+     * @param upsert
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+    private <T> ConcurrentLinkedQueue<QueryResourceInfo> load(File jsonFile,LoadRow<T> loader,boolean upsert) throws IOException {
         responses.clear();
 
         GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(jsonFile.getPath()));
@@ -96,12 +117,11 @@ public class BaseImportService implements ImportService {
                 fuseClientService.asyncUpload(graphModel)
                         .thenAccept(this::notify);
 */
-                fuseClientService.upload(graphModel);
+                fuseClientService.load(graphModel,upsert);
                 //restart counter and create a new graphModel
                 counter=0;
                 graphModel = new LogicalGraphModel();
-            }
-            //populate title node in the graph graphModel
+            }//populate title node in the graph graphModel
             loader.loadRow(graphModel,iterator.next());
             counter++;
 

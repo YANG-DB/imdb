@@ -1,6 +1,7 @@
 package com.imdb.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangdb.fuse.client.BaseFuseClient;
 import com.yangdb.fuse.client.FuseClient;
 import com.yangdb.fuse.model.logical.LogicalEdge;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,10 +36,12 @@ public class FuseClientService {
     private static final int FUSE_TIMEOUT_MAX_COUNTER = 20;
     public static final int PAGE_SIZE = 1000;
 
+
     @Value("${fuse.url}")
     private String fuseUrl;
 
     private FuseClient fuseClient;
+    private ObjectMapper objectMapper;
     private FuseResourceInfo fuseResourceInfo;
 
 
@@ -44,6 +50,7 @@ public class FuseClientService {
         try {
             fuseClient = new BaseFuseClient(fuseUrl);
             fuseResourceInfo = fuseClient.getFuseInfo();
+            objectMapper = new ObjectMapper();
         } catch (IOException e) {
             logger.error("Could not connect to fuse", e);
         }
@@ -97,15 +104,30 @@ public class FuseClientService {
         return pageResourceInfo;
     }
 
-    public QueryResourceInfo upload(LogicalGraphModel graphModel)  {
+    public QueryResourceInfo load(LogicalGraphModel graphModel,boolean upsert) {
+        Path path = null;
         try {
-            return fuseClient.loadData(KNOWLEDGE, graphModel);
+            path = Files.createTempFile("tmpGraphModel", ".json");
+            objectMapper.writeValue(path.toFile(),graphModel);
+            return load(path,upsert);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
+            if(path!=null)//Delete file on exit
+                path.toFile().deleteOnExit();
+
         }
     }
 
-    public CompletableFuture<QueryResourceInfo> asyncUpload(LogicalGraphModel model) {
-        return CompletableFuture.supplyAsync(() -> upload(model));
+    private QueryResourceInfo load(Path path,boolean upsert) throws IOException {
+        if(upsert)
+            // load without merge
+            return fuseClient.upsertData(KNOWLEDGE, path.toFile().toURL());
+        //merge
+        return fuseClient.loadData(KNOWLEDGE, path.toFile().toURL());
+    }
+
+    public CompletableFuture<QueryResourceInfo> asyncUpload(LogicalGraphModel model,boolean upsert) {
+        return CompletableFuture.supplyAsync(() -> load(model,upsert));
     }
 }

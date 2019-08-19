@@ -134,15 +134,23 @@ public class ImdbImporter {
     }
 
     /**
-     * load rating
+     * load rating - will be merged into the existing title
      * @param model
      * @param line
      * @return
      */
     public static IMDB.Row<IMDB.Rating> loadRating(LogicalGraphModel model, String line) {
         IMDB.Row<IMDB.Rating> row = IMDB.Rating.of(Arrays.asList(line.split("[\t]")));
+        //title id
+        String id = row.id()._2.toString();
 
-        //todo add value to title node
+        //add value to title node
+        LogicalNode node = new LogicalNode(id, IMDB.Rating.class.getSimpleName());
+        row.columns()
+            .forEach(c -> node.withProperty(c._1.name(), c._2));
+
+        //add node to graph
+        model.getNodes().add(node);
 
         return row;
     }
