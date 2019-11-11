@@ -1,4 +1,4 @@
-package com.imdb.services;
+package com.imdb.knowledge.services;
 
 import com.imdb.model.IMDB;
 import com.yangdb.fuse.model.logical.LogicalEdge;

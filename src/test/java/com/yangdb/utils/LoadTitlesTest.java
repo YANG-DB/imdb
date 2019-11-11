@@ -1,7 +1,7 @@
 package com.yangdb.utils;
 
 import com.imdb.Application;
-import com.imdb.services.ImportService;
+import com.imdb.knowledge.services.ImportService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

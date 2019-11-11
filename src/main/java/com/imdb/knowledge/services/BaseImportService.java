@@ -1,4 +1,4 @@
-package com.imdb.services;
+package com.imdb.knowledge.services;
 
 import com.yangdb.fuse.model.logical.LogicalGraphModel;
 import com.yangdb.fuse.model.resourceInfo.QueryResourceInfo;

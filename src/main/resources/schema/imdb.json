@@ -1,0 +1,349 @@
+{
+  "ont": "IMDB",
+  "entityTypes": [
+    {
+      "eType": "TitleAKA",
+      "name": "TitleAKA",
+      "properties": [
+        "titleId",
+        "ordering",
+        "title",
+        "gender",
+        "region",
+        "types",
+        "attributes",
+        "isOriginalTitle"
+      ]
+    },
+    {
+      "eType": "Title",
+      "name": "Title",
+      "properties": [
+        "tconst",
+        "titleType",
+        "primaryTitle",
+        "originalTitle",
+        "isAdult",
+        "startYear",
+        "endYear",
+        "runtimeMinutes",
+        "genres"
+      ]
+    },
+    {
+      "eType": "Crew",
+      "name": "Crew",
+      "properties": [
+        "tconst",
+        "directors",
+        "writers"
+      ]
+    },
+    {
+      "eType": "Episods",
+      "name": "Episods",
+      "properties": [
+        "tconst",
+        "parentTconst",
+        "seasonNumber",
+        "episodeNumber"
+      ]
+    },
+    {
+      "eType": "Cast",
+      "name": "Cast",
+      "properties": [
+        "tconst",
+        "nconst",
+        "ordering",
+        "category",
+        "job",
+        "characters"
+      ]
+    },
+    {
+      "eType": "Rating",
+      "name": "Rating",
+      "properties": [
+        "tconst",
+        "averageRating",
+        "numVotes"
+      ]
+    },
+    {
+      "eType": "Person",
+      "name": "Person",
+      "properties": [
+        "tconst",
+        "primaryName",
+        "birthYear",
+        "deathYear",
+        "primaryProfession",
+        "knownForTitles"
+      ]
+    }
+  ],
+  "relationshipTypes": [
+    {
+      "rType": "AKA",
+      "name": "AKA",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Title",
+          "eTypeB": "TitleAKA"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "CrewOf",
+      "name": "CrewOf",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Crew",
+          "eTypeB": "Title"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "EpisodsOf",
+      "name": "EpisodsOf",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Episods",
+          "eTypeB": "Title"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "CastOf",
+      "name": "CastOf",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Cast",
+          "eTypeB": "Person"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "CastIn",
+      "name": "CastIn",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Cast",
+          "eTypeB": "Title"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "RatingOf",
+      "name": "RatingOf",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Rating",
+          "eTypeB": "Title"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    },
+    {
+      "rType": "PersonIn",
+      "name": "PersonIn",
+      "directional": true,
+      "ePairs": [
+        {
+          "eTypeA": "Person",
+          "eTypeB": "Title"
+        }
+      ],
+      "properties": [
+        "id"
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "pType": "id",
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "pType": "tconst",
+      "name": "tconst",
+      "type": "string"
+    },
+    {
+      "pType": "nconst",
+      "name": "nconst",
+      "type": "string"
+    },
+    {
+      "pType": "ordering",
+      "name": "ordering",
+      "type": "string"
+    },
+    {
+      "pType": "title",
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "pType": "region",
+      "name": "region",
+      "type": "string"
+    },
+    {
+      "pType": "types",
+      "name": "types",
+      "type": "string"
+    },
+    {
+      "pType": "attributes",
+      "name": "attributes",
+      "type": "string"
+    },
+    {
+      "pType": "isOriginalTitle",
+      "name": "isOriginalTitle",
+      "type": "boolean"
+    },
+
+
+   {
+      "pType": "titleType",
+      "name": "titleType",
+      "type": "string"
+    },
+   {
+      "pType": "primaryTitle",
+      "name": "primaryTitle",
+      "type": "string"
+    },
+   {
+      "pType": "originalTitle",
+      "name": "originalTitle",
+      "type": "string"
+    },
+    {
+      "pType": "isAdult",
+      "name": "isAdult",
+      "type": "boolean"
+    },
+    {
+      "pType": "startYear",
+      "name": "startYear",
+      "type": "date"
+    },
+    {
+      "pType": "endYear",
+      "name": "endYear",
+      "type": "date"
+    },
+    {
+      "pType": "runtimeMinutes",
+      "name": "runtimeMinutes",
+      "type": "int"
+    },
+    {
+      "pType": "genres",
+      "name": "genres",
+      "type": "string"
+    },
+
+
+    {
+      "pType": "directors",
+      "name": "directors",
+      "type": "string"
+    },
+    {
+      "pType": "writers",
+      "name": "writers",
+      "type": "string"
+    },
+
+
+    {
+      "pType": "parentTconst",
+      "name": "parentTconst",
+      "type": "string"
+    },
+    {
+      "pType": "seasonNumber",
+      "name": "seasonNumber",
+      "type": "int"
+    },
+    {
+      "pType": "episodeNumber",
+      "name": "episodeNumber",
+      "type": "int"
+    },
+    {
+      "pType": "category",
+      "name": "category",
+      "type": "string"
+    },
+    {
+      "pType": "job",
+      "name": "job",
+      "type": "string"
+    },
+   {
+      "pType": "characters",
+      "name": "characters",
+      "type": "string"
+    },
+   {
+      "pType": "averageRating",
+      "name": "averageRating",
+      "type": "int"
+    },
+   {
+      "pType": "numVotes",
+      "name": "numVotes",
+      "type": "int"
+    },
+   {
+      "pType": "primaryName",
+      "name": "primaryName",
+      "type": "string"
+    },
+   {
+      "pType": "birthYear",
+      "name": "birthYear",
+      "type": "date"
+    },
+   {
+      "pType": "deathYear",
+      "name": "deathYear",
+      "type": "date"
+    },
+   {
+      "pType": "primaryProfession",
+      "name": "primaryProfession",
+      "type": "string"
+    }
+  ]
+}

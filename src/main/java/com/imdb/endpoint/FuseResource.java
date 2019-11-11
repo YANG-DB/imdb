@@ -1,7 +1,7 @@
 package com.imdb.endpoint;
 
-import com.imdb.services.ImportService;
-import com.imdb.services.QueryService;
+import com.imdb.knowledge.services.ImportService;
+import com.imdb.knowledge.services.QueryService;
 import com.yangdb.fuse.model.logical.LogicalGraphModel;
 import com.yangdb.fuse.model.resourceInfo.QueryResourceInfo;
 import org.slf4j.Logger;

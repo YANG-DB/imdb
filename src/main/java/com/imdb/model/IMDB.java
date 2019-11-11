@@ -18,7 +18,7 @@ public interface IMDB {
         title($("title", "stringValue", FIELD)),
         region($("region", "stringValue", FIELD)),
         types($("types", "stringValue", FIELD)),
-        attributes($("types", "stringValue", FIELD)),
+        attributes($("attributes", "stringValue", FIELD)),
         isOriginalTitle($("isOriginalTitle", "boolean", FIELD));
 
         private Model model;
